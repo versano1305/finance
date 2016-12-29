@@ -1,8 +1,8 @@
 package modules.persistence.supplier;
 
-import java.io.Serializable;
+import common.persistence.BaseEntity;
 
-public class Supplier implements Serializable {
+public class Supplier extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 	
