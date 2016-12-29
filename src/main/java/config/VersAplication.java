@@ -1,16 +1,39 @@
 package config;
 
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import com.sun.jersey.api.core.ResourceConfig;
 
 public class VersAplication extends ResourceConfig {
-    /**
-	* Register JAX-RS application components.
-	*/
+
+	
 	public VersAplication(){
-		register(RequestContextFilter.class);
-//		register(PodcastRestService.class);
-		register(JacksonFeature.class);
+	    // Jackson JSON marshalling
+
+	}
+
+	@Override
+	public boolean getFeature(String arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Map<String, Boolean> getFeatures() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getProperties() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object getProperty(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
