@@ -5,11 +5,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import common.persistence.BaseDaoImpl;
 import modules.persistence.supplier.Supplier;
 import modules.persistence.user.User;
 
 @Repository
-public class SupplierDaoImpl implements SupplierDao {
+public class SupplierDaoImpl extends BaseDaoImpl<Supplier> implements SupplierDao {
 
 	private List<Supplier> suppliersList;
 	

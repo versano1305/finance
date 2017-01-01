@@ -1,12 +1,23 @@
 package modules.persistence.user;
 
+import org.springframework.data.annotation.Id;
+
 import common.persistence.BaseEntity;
 
 public class User extends BaseEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	@Id
+	private Long id;
 	private String firstName;
 	private String lastName;
 	private String email;
+	
+	
 	public String getFirstName() {
 		return firstName;
 	}

@@ -1,5 +1,7 @@
 package modules.persistence.supplier;
 
+import java.util.List;
+
 import common.persistence.BaseEntity;
 
 public class Supplier extends BaseEntity {
@@ -8,6 +10,7 @@ public class Supplier extends BaseEntity {
 	
 	private String name;
 	private String email;
+	private List<String> lll;
 	
 	public Supplier(String name, String email) {
 		this.name = name;
@@ -29,5 +32,13 @@ public class Supplier extends BaseEntity {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+
+	public List<String> getLll() {
+		return lll;
+	}
+
+	public void setLll(List<String> lll) {
+		this.lll = lll;
+	}
+		
 }

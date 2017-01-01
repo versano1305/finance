@@ -1,5 +1,0 @@
-modules\persistence\supplier\Supplier.class
-modules\service\suppliers\SupplierServiceImpl.class
-modules\service\ObjectMapperProvider.class
-modules\service\suppliers\SupplierService.class
-config\VersAplication.class
