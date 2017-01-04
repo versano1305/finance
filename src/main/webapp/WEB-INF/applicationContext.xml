@@ -10,11 +10,12 @@
 
 	<context:component-scan base-package="modules.service" />
 	<context:component-scan base-package="modules.control" />
+	<context:component-scan base-package="config" />
 
-<!-- 	<mongo:db-factory id="anotherMongoDbFactory" host="localhost" -->
-<!-- 		port="27017" dbname="database" /> -->
-<!-- 	username="joe" -->
-<!-- 	password="secret"/> -->
+	<!-- <mongo:db-factory id="anotherMongoDbFactory" host="localhost" -->
+	<!-- port="27017" dbname="database" /> -->
+	<!-- username="joe" -->
+	<!-- password="secret"/> -->
 
 	<mongo:mongo host="localhost" port="27017" />
 
