@@ -5,18 +5,6 @@
 <web-app>
 	<display-name>Archetype Created Web Application</display-name>
 
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/applicationContext.xml</param-value>
-	</context-param>
-
-
-	<listener>
-		<listener-class>
-			org.springframework.web.context.ContextLoaderListener
-		</listener-class>
-	</listener>
-
 	<servlet>
 		<servlet-name>vers-service</servlet-name>
 		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
@@ -35,5 +23,28 @@
 		<servlet-name>vers-service</servlet-name>
 		<url-pattern>/service/*</url-pattern>
 	</servlet-mapping>
+
+	<!-- Loads Spring config files -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<!--<param-value>/WEB-INF/applicationContext.xml,/WEB-INF/spring-security.xml</param-value> -->
+		 <param-value>/WEB-INF/applicationContext.xml,config.security.SpringSecurityConfig</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+
+	<!-- Spring Security -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 </web-app>

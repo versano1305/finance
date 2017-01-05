@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class UserSecurityService implements UserDetailsService {
 
@@ -30,7 +31,10 @@ public class UserSecurityService implements UserDetailsService {
 				}
 			});
 
-			user = new User(username, "123456", grantedAuthorities);
+			BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+			String encodePassword = bCryptPasswordEncoder.encode("123456");
+			user = new User(username, encodePassword, grantedAuthorities);
 			// throw new UsernameNotFoundException("user not found");
 		}
 		detailsChecker.check(user);

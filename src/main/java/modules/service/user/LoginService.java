@@ -46,6 +46,7 @@ public class LoginService {
 
 		Authentication authentication = this.authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		User loadUserByUsername = this.userSecurityService.loadUserByUsername(username);
 		TokenHandler tokenHandler = new TokenHandler("ddddd", userSecurityService);
