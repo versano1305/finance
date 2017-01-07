@@ -1,15 +1,13 @@
 package modules.persistence.user;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import common.persistence.BaseEntity;
 
-public class User extends BaseEntity implements UserDetails {
+public class User extends BaseEntity {
 
 	/**
 	 * 
@@ -17,35 +15,39 @@ public class User extends BaseEntity implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	private final Long id;
-	private final String firstName;
-	private final String lastName;
-	private final String username;
-	private final String password;
-	private final String email;
-	private final Collection<? extends GrantedAuthority> authorities;
-	private final boolean enabled;
-	private final Date lastPasswordResetDate;
+	public String id;
+	private String firstName;
+	private String lastName;
+	private String userName;
+	private String password;
+	private String email;
+	private List<Authority> authorities = null;
+	private boolean enabled;
+	private Date lastPasswordResetDate;
 
-	public User(Long id, String username, String firstname, String lastname, String email, String password,
-			Collection<? extends GrantedAuthority> authorities, boolean enabled, Date lastPasswordResetDate) {
-		this.id = id;
-		this.username = username;
-		this.firstName = firstname;
-		this.lastName = lastname;
+	public User(String userName, String firstName, String lastName, String email, String password, boolean enabled,
+			Date lastPasswordResetDate) {
+
+		this.userName = userName;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
-		this.authorities = authorities;
 		this.enabled = enabled;
 		this.lastPasswordResetDate = lastPasswordResetDate;
+//		TODO add  authorities
 	}
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {
@@ -56,8 +58,8 @@ public class User extends BaseEntity implements UserDetails {
 		return lastName;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getUserName() {
+		return userName;
 	}
 
 	public String getPassword() {
@@ -68,7 +70,7 @@ public class User extends BaseEntity implements UserDetails {
 		return email;
 	}
 
-	public Collection<? extends GrantedAuthority> getAuthorities() {
+	public List<Authority> getAuthorities() {
 		return authorities;
 	}
 
@@ -80,15 +82,36 @@ public class User extends BaseEntity implements UserDetails {
 		return lastPasswordResetDate;
 	}
 
-	public boolean isAccountNonExpired() {
-		return true;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public boolean isAccountNonLocked() {
-		return true;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
-	public boolean isCredentialsNonExpired() {
-		return true;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setAuthorities(List<Authority> authorities) {
+		this.authorities = authorities;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public void setLastPasswordResetDate(Date lastPasswordResetDate) {
+		this.lastPasswordResetDate = lastPasswordResetDate;
+	}
+
 }

@@ -13,11 +13,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
-import config.security.TokenHandler;
-import config.security.UserSecurityService;
+import config.security.jwt.JwtTokenUtil;
+import modules.control.user.UserDao;
 
 @Component
 @Path("/login")
@@ -25,9 +26,15 @@ public class LoginService {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-
-	@Autowired
-	private UserSecurityService userSecurityService;
+	
+    @Autowired
+    private UserDetailsService userDetailsService;
+    
+    @Autowired
+    private UserDao userDao ;
+    
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
 	@POST
 	@Path("")
@@ -43,16 +50,22 @@ public class LoginService {
 			return Response.status(Status.PRECONDITION_FAILED.getStatusCode()).entity("Password value is missing!!!")
 					.build();
 		}
-
+//
+//		String encode = passwordEncoder.encode(password);
+//		User user = new User(username, "dddd", "sss","ssss",encode,true,new Date());
+//		userDao.save(user);
+		
 		Authentication authentication = this.authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
+
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		User loadUserByUsername = this.userSecurityService.loadUserByUsername(username);
-		TokenHandler tokenHandler = new TokenHandler("ddddd", userSecurityService);
-		String token = tokenHandler.createTokenForUser(loadUserByUsername);
 
-		return Response.status(Status.OK).entity(token).build();
+        // Reload password post-security so we can generate token
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        final String token = jwtTokenUtil.generateToken(userDetails);
 
+        return Response.ok(token).build();
+        
 	}
 }

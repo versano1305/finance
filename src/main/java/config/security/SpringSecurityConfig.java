@@ -1,78 +1,45 @@
 package config.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import config.security.jwt.JwtAuthenticationEntryPoint;
+import config.security.jwt.JwtAuthenticationTokenFilter;
+
+@SuppressWarnings("SpringJavaAutowiringInspection")
 @Configuration
 @EnableWebSecurity
-@Order(2)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private final UserSecurityService userService;
-	private final TokenAuthenticationService tokenAuthenticationService;
+	@Autowired
+	private JwtAuthenticationEntryPoint unauthorizedHandler;
 
-	public SpringSecurityConfig() {
-		super(true);
-		this.userService = new UserSecurityService();
-		tokenAuthenticationService = new TokenAuthenticationService("tooManySecrets", userService);
-	}
+	@Autowired
+	private UserDetailsService userDetailsService;
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable()
-
-				.exceptionHandling().and().anonymous().and().servletApi().and().headers().cacheControl().and()
-				.authorizeRequests()
-
-				// Allow anonymous resource requests
-				.antMatchers("/public").permitAll().antMatchers("/service/login/*").permitAll()
-				.antMatchers("/service/signup/*").permitAll()
-
-				// All other request need to be authenticated
-				.anyRequest().authenticated().and()
-
-				// Custom Token based authentication based on the header
-				// previously given to the client
-				.addFilterBefore(new StatelessAuthenticationFilter(tokenAuthenticationService),
-						UsernamePasswordAuthenticationFilter.class);
-
-	}
-
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		// auth.authenticationProvider(new TestingAuthenticationProvider());
-
-		DaoAuthenticationConfigurer<AuthenticationManagerBuilder, UserSecurityService> userDetailsService = auth
-				.userDetailsService(userDetailsService());
-
-		userDetailsService.passwordEncoder(passwordEncoder());
-	}
-
-	@Bean
+	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
 
-	@Bean
-	@Override
-	public UserSecurityService userDetailsService() {
-		return userService;
-	}
-
-	@Bean
-	public TokenAuthenticationService tokenAuthenticationService() {
-		return tokenAuthenticationService;
+	@Autowired
+	public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+		authenticationManagerBuilder.userDetailsService(this.userDetailsService).passwordEncoder(passwordEncoder());
 	}
 
 	@Bean
@@ -80,4 +47,34 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		return new BCryptPasswordEncoder();
 	}
 
+	@Bean
+	public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
+		return new JwtAuthenticationTokenFilter();
+	}
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.csrf().disable()
+
+				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+
+				// don't create session
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+
+				.exceptionHandling().and().anonymous().and().servletApi().and().authorizeRequests()
+
+				// Allow anonymous resource requests
+				.antMatchers("/public").permitAll().antMatchers("/service/login").permitAll()
+				.antMatchers("/service/signup/*").permitAll()
+
+				// All other request need to be authenticated
+				.anyRequest().authenticated().and();
+
+		// Custom JWT based security filter
+		http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+
+		// disable page caching
+		http.headers().cacheControl();
+
+	}
 }

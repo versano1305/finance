@@ -5,4 +5,6 @@ import modules.persistence.user.User;
 
 public interface UserDao extends BaseDao<User> {
 
+	User findByUsername(String username);
+
 }
